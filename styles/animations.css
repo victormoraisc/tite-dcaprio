@@ -1,0 +1,67 @@
+/* ===================================================
+   ENTRADAS POR SCROLL
+   =================================================== */
+
+
+/* ===================================================
+   RESET GLOBAL DE OVERFLOW (Evita barra de rolagem horizontal)
+   =================================================== */
+html, body {
+    overflow-x: clip; /* Corta o que vaza na horizontal, mas mantém o sticky vivo! */
+}
+
+.anim-left, .anim-right, .anim-bottom, .anim-fade,
+.anim-marquee, .anim-pulse {
+    will-change: transform, opacity;
+}
+
+/* 1. Estados Iniciais (Ocultos) */
+.anim-left { opacity: 0 !important; transform: translate3d(-120px, 0, 0) !important; }
+.anim-right { opacity: 0 !important; transform: translate3d(120px, 0, 0) !important; }
+.anim-bottom { opacity: 0 !important; transform: translate3d(0, 100px, 0) !important; }
+.anim-fade { opacity: 0 !important; }
+
+/* 2. As transições de entrada: Lê a duração E o delay */
+.anim-left, .anim-right, .anim-bottom, .anim-fade {
+    transition: transform var(--anim-duration, 1s) cubic-bezier(0.16, 1, 0.3, 1) var(--anim-delay, 0s), 
+                opacity var(--anim-duration, 1s) ease-out var(--anim-delay, 0s) !important;
+}
+
+/* 3. Estados Finais (Ativados pelo scroll-observer.js) */
+.anim-left.is-visible, .anim-right.is-visible, 
+.anim-bottom.is-visible, .anim-fade.is-visible {
+    opacity: 1 !important;
+    transform: translate3d(0, 0, 0) !important;
+}
+
+
+/* ===================================================
+   LOOPS (Rodam independente do scroll)
+   =================================================== */
+
+/* Efeito Faixa Infinita */
+.anim-marquee {
+    display: flex;
+    width: max-content;
+    /* Shorthand: name | duration | easing | delay | iterations | direction | fill-mode */
+    animation: rolarInfinito var(--anim-duration, 12s) linear var(--anim-delay, 0s) var(--anim-repeat, infinite) normal forwards;
+}
+
+.anim-marquee > * {
+    white-space: nowrap;
+}
+
+@keyframes rolarInfinito {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* Efeito Piscar */
+.anim-pulse {
+    animation: pulsarOpacity var(--anim-duration, 2s) ease-in-out var(--anim-delay, 0s) var(--anim-repeat, infinite) normal forwards;
+}
+
+@keyframes pulsarOpacity {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+}
